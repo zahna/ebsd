@@ -1,0 +1,57 @@
+body{
+    background: #dddddd;
+}
+
+#top{
+    position: absolute;
+    left: 5px;
+    right: 5px;
+    top: 5px;
+    border: 1px solid;
+    padding: 5px;
+    background: #ffffff;
+}
+
+#navMenu{
+    position: absolute;
+    left: 5px;
+    width: 100px;
+    top: 72px;
+    border: 1px solid;
+    padding: 5px;
+    background: #ffffff;
+}
+
+#navMenuHead{
+    font-size: large;
+}
+
+#main{
+    position: absolute;
+    left: 122px;
+    right: 5px;
+    top: 72px;
+    border: 1px solid;
+    padding: 5px;
+    background: #ffffff;
+}
+
+#logtext{
+    font-family: monospace;
+    font-size: small;
+}
+
+#login{
+    position: absolute;
+    left: 34%;
+    right: 34%;
+    top: 20%;
+    border: 1px solid;
+    padding: 5px;
+    text-align: right;
+    background: #ffffff;
+}
+
+#right-align{
+    text-align: right;
+}

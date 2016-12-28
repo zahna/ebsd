@@ -1,0 +1,63 @@
+#!/bin/sh
+#
+# /etc/rc 
+
+set -T
+stty status '^T'
+
+# Set shell to ignore SIGINT (2), but not children;
+# shell catches SIGQUIT (3) and returns to single user.
+trap : 2
+trap "echo 'Boot interrupted'; exit 1" 3
+
+HOME=/
+PATH=/usr/local/bin:/usr/bin:/bin:/usr/local/sbin:/usr/sbin:/sbin
+TERM=vt100
+#PYTHONPATH=/usr/local/etc/classes:$PYTHONPATH
+export HOME PATH TERM
+
+umask 002
+
+# Mount partitions
+/sbin/mount /cfg
+
+# Create the /var, /etc, and /usr/local/etc ramdisks
+/sbin/mdconfig -a -t malloc -o reserve -s 6m -u 0 && \
+/sbin/mdconfig -a -t malloc -o reserve -s 1m -u 1 && \
+/sbin/mdconfig -a -t malloc -o reserve -s 1m -u 2 || \
+echo "Creation of ramdisks failed."
+
+# Format the ramdisks
+/sbin/newfs -b 4096 -f 512 -i 4096 -o space -m 0 md0
+/sbin/newfs -b 4096 -f 512 -i 4096 -o space -m 0 md1
+/sbin/newfs -b 4096 -f 512 -i 4096 -o space -m 0 md2
+
+# Mount the ramdisks read-write
+/sbin/mount -o rw /dev/md0 /var && chmod 775 /var
+/sbin/mount -o rw,union /dev/md1 /etc && chmod 775 /etc
+/sbin/mount -o rw,union /dev/md2 /usr/local/etc && chmod 775 /usr/local/etc
+
+# Copy the config database to /etc and umount /cfg
+/bin/cp /cfg/config.db /etc
+/sbin/umount /cfg
+
+# Create important /var directories
+/bin/mkdir /var/run /var/tmp /var/log /var/db /var/mount /var/empty
+
+# Special for afpd
+/bin/mkdir -p /var/spool/lock
+
+# Create needed files
+# Create an initial utmp file
+/usr/bin/touch /var/run/utmp && /bin/chmod 644 /var/run/utmp
+
+# Run ldconfig
+/sbin/ldconfig -elf /lib /usr/lib /usr/local/lib
+
+# Copy over config database to /etc ramdisk. /etc is rw.
+#cp /cfg/config.db /etc
+
+# Hand off to the "upper level" software
+/usr/local/etc/rc
+
+exit 0

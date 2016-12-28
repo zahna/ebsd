@@ -1,0 +1,13 @@
+# These are the files needed for booting
+
+/boot/boot
+#/boot/boot0
+/boot/device.hints
+/boot/loader
+/boot/loader.4th
+/boot/loader.conf
+/boot/loader.rc
+/boot/support.4th
+/boot/defaults/loader.conf
+/boot/kernel/kernel.gz
+

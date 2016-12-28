@@ -1,0 +1,6 @@
+8 partitions:
+#        size   offset    fstype   [fsize bsize bps/cpg]
+  a:    16384       16    unused        0     0
+  b:   240776        *    unused        0     0
+  c:   497952        0    unused        0     0         # "raw" part, don't edit
+  d:   240776        *    unused        0     0

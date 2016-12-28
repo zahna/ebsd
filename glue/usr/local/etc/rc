@@ -1,0 +1,42 @@
+#!/usr/local/bin/python
+# encoding: utf-8
+# This script is called by /etc/rc.
+# It contains the majority of the system initialization process.
+
+import os
+import commands
+import syslog
+import subprocess
+
+# Setup our modules
+import appliance 
+from config import Config
+
+myConfig = Config()
+myAppliance = appliance.Appliance(myConfig)
+
+# Generate /etc/localtime 
+myAppliance.timeGenLocal()
+
+# Set the hostname
+myAppliance.netSetHostname()
+
+# Generate user account and login files
+myAppliance.authGenPasswdFiles()
+myAppliance.authGenGroupFiles()
+myAppliance.authGenSmbFiles()
+#subprocess.call(['/usr/bin/cap_mkdb /etc/login.conf'], shell=True)
+
+# Start all enabled services
+for svc in myAppliance.svcGetDepList('*'):
+    if not myAppliance.svcAction(svc, 'start'):
+        syslog.syslog(syslog.LOG_ERR, 'Starting %s failed. Halting service startup at %s...' % (svc, svc))
+        break
+
+# After starting services are there any changes to our config
+# that we need to commit?
+if myConfig.needCommit:
+    syslog.syslog(syslog.LOG_NOTICE, 'rc: config updated, committing to CF')
+    #config.save()
+
+exit(0)

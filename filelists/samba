@@ -1,0 +1,3 @@
+#/usr/local/bin/net
+/usr/local/sbin/smbd
+/usr/local/sbin/nmbd
